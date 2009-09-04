@@ -4,7 +4,8 @@ fost-exe fpython
     :
         ../../../Boost//boost-python-dll
         /python//python
-        ../../Cpp/fost-python/
+        ../fost-pyhost/
+        ../fost-python/
         fpython.cpp
     ;
 

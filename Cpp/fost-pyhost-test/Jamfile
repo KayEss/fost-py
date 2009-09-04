@@ -1,0 +1,9 @@
+
+fost-smoke-test fost-pyhost-test-smoke
+    :
+        /python//python
+        ../../../Boost//boost-python-dll
+        ../fost-pyhost/
+    :
+        inproc-tests.cpp
+    ;
