@@ -7,9 +7,7 @@
 
 
 #include "fost-python.hpp"
-#include <fost/pybind.hpp>
-
-#include <fost/exception/not_implemented.hpp>
+#include <fost/detail/pybind.hpp>
 
 
 using namespace fostlib;
