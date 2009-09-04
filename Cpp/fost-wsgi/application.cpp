@@ -8,8 +8,10 @@
 
 #include "fost-wsgi.hpp"
 #include <fost/python>
+#include <fost/threading>
 #include <fost/detail/wsgi.application.hpp>
 
+#include <boost/lambda/bind.hpp>
 #include <boost/python/stl_iterator.hpp>
 
 
@@ -17,7 +19,18 @@ using namespace fostlib;
 
 
 namespace {
+    /*
+        Because g_response is currently global it must be protected in case this application gets used in a threaded
+        environment.
+    */
+    boost::mutex g_mutex;
+    std::auto_ptr< mime > g_response;
+
     boost::python::object start_response(boost::python::object status, boost::python::list headers) {
+        mime::mime_headers response_headers;
+        for ( boost::python::stl_input_iterator<boost::python::tuple> i(headers), e; i != e; ++i )
+            response_headers.set( boost::python::extract<string>((*i)[0])(), boost::python::extract<string>((*i)[1])() );
+        g_response = std::auto_ptr< mime >( new text_body( string("No body yet"), response_headers, L"text/plain" ) );
         return boost::python::object();
     }
 }
@@ -31,15 +44,24 @@ fostlib::python::wsgi::application::application( const string &appname ) {
     m_application = boost::python::getattr(m_module, coerce< boost::python::str >(appname.substr(last_dot + 1)));
 }
 
-
 std::auto_ptr< mime > fostlib::python::wsgi::application::operator () (
     http::server::request &req, boost::python::dict environ
 ) const {
+    // Set up the environment for the request
     environ["PATH_INFO"] = boost::python::str(req.file_spec().underlying().underlying());
-    boost::python::object strings = m_application(environ, start_response);
+    for ( mime::mime_headers::const_iterator header( req.data().headers().begin() ); header != req.data().headers().end(); ++header ) {
+        std::string name = replaceAll(header->first, L"-", L"_").std_str();
+        for ( std::string::iterator c(name.begin()); c != name.end(); ++c)
+            *c = std::toupper(*c);
+        environ["HTTP_" + name] = header->second.value();
+    }
+    // Process the request
+    std::auto_ptr< mime > response;
     string result;
+    boost::mutex::scoped_lock lock(g_mutex); // Protect g_response
+    boost::python::object strings = m_application(environ, start_response);
     for ( boost::python::stl_input_iterator<string> i(strings), e; i != e; ++i )
         result += *i;
-    return std::auto_ptr< mime >( new text_body( result, mime::mime_headers(), L"text/plain" ) );
+    return g_response;
 }
 

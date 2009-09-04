@@ -46,10 +46,14 @@ FSL_MAIN(
     environment["wsgi.multiprocess"] = false;
     environment["wsgi.run_once"] = false;
 
+    environment["SCRIPT_NAME"] = boost::python::str();
+    environment["SERVER_PORT"] = boost::python::str(coerce< string >( c_port.value() ));
+
     // Keep serving forever
     for ( bool process( true ); process; ) {
         std::auto_ptr< http::server::request > req( server() );
         o << req->method() << L" " << req->file_spec() << std::endl;
+        environment["SERVER_NAME"] = boost::python::str(c_host.value());
         (*req)( *app(*req, environment) );
     }
     return 0;
