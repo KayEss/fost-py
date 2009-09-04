@@ -1,8 +1,9 @@
 
 fost-lib fost-wsgi
     :
-        ../../../Boost//boost-python-dll
         /python//python
+        ../../../Boost//boost-python-dll
+        ../../../fost-internet/Cpp/fost-inet/
         ../fost-python/
         application.cpp
     ;
