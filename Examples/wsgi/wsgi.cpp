@@ -38,11 +38,19 @@ FSL_MAIN(
     // Find the Python function that corresponds to the application
     python::wsgi::application app( c_application.value() );
 
+    // Set up an environment which contains the global non-changing aspects
+    boost::python::dict environment;
+    environment["wsgi.version"] = boost::python::make_tuple(1, 0);
+    environment["wsgi.url_scheme"] = boost::python::str("http");
+    environment["wsgi.multithread"] = false;
+    environment["wsgi.multiprocess"] = false;
+    environment["wsgi.run_once"] = false;
+
     // Keep serving forever
     for ( bool process( true ); process; ) {
         std::auto_ptr< http::server::request > req( server() );
         o << req->method() << L" " << req->file_spec() << std::endl;
-        (*req)( *app(*req) );
+        (*req)( *app(*req, environment) );
     }
     return 0;
 }

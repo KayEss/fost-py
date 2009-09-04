@@ -17,7 +17,8 @@ using namespace fostlib;
 
 
 namespace {
-    void start_response(boost::python::object status, boost::python::list headers) {
+    boost::python::object start_response(boost::python::object status, boost::python::list headers) {
+        return boost::python::object();
     }
 }
 
@@ -31,8 +32,10 @@ fostlib::python::wsgi::application::application( const string &appname ) {
 }
 
 
-std::auto_ptr< mime > fostlib::python::wsgi::application::operator () ( http::server::request & ) const {
-    boost::python::dict environ;
+std::auto_ptr< mime > fostlib::python::wsgi::application::operator () (
+    http::server::request &req, boost::python::dict environ
+) const {
+    environ["PATH_INFO"] = boost::python::str(req.file_spec().underlying().underlying());
     boost::python::object strings = m_application(environ, start_response);
     string result;
     for ( boost::python::stl_input_iterator<string> i(strings), e; i != e; ++i )

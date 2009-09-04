@@ -28,9 +28,9 @@ namespace fostlib {
             class FOST_WSGI_DECLSPEC application : boost::noncopyable {
                 boost::python::object m_module, m_application;
                 public:
-                    explicit application( const string & );
+                    explicit application( const string &python_application_name );
 
-                    std::auto_ptr< mime > operator () ( http::server::request & ) const;
+                    std::auto_ptr< mime > operator () ( http::server::request &, boost::python::dict environment ) const;
             };
 
 
