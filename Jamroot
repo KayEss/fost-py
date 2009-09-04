@@ -31,12 +31,13 @@ rule py-install ( pyd : location )
 }
 
 fost-install-loc .. : ../Boost//boost-python-dll ;
-build-project Cpp/fost-python-test/ ;
 build-project Cpp/fost-crypto-py/ ;
+build-project Cpp/fost-fpython/ ;
 build-project Cpp/fost-internet-py/ ;
 build-project Cpp/fost-json-py/ ;
+build-project Cpp/fost-python ;
+build-project Cpp/fost-python-test/ ;
 build-project Cpp/fost-settings-py/ ;
-build-project Cpp/fost-fpython/ ;
 build-project Python/ ;
 
 import path ;
