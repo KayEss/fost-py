@@ -8,3 +8,6 @@ print "Test 01"
 
 def main():
     print "Test 01"
+
+if __name__ == "__main__":
+    assert False, __name__
