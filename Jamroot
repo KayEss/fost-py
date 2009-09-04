@@ -1,9 +1,12 @@
 path-constant TOP : . ;
 include $(TOP)/../boost-version.jam ;
+include ../fost-base/fost.jam ;
 
 using python ;
+use-project Boost : ../Boost ;
 use-project fost-base : ../fost-base ;
-include ../fost-base/fost.jam ;
+use-project fost-internet : ../fost-internet ;
+use-project fost-orm : ../fost-orm ;
 
 fost-project fost-py
     :
@@ -23,27 +26,11 @@ rule run-test ( test-name : sources + )
 # An install rule for the Python libs
 rule py-install ( pyd : location )
 {
-    install ../../../dist/lib :
-            $(pyd)
-        :
-            <target-os>linux:<install-type>LIB
-            <target-os>linux:<install-dependencies>on
-            <target-os>darwin:<install-type>LIB
-            <target-os>darwin:<install-dependencies>on
-            <target-os>windows:<install-type>XXX
-        ;
-
-    install ../../../dist/bin :
-            $(pyd)
-        :
-            <target-os>windows:<install-type>LIB
-            <target-os>windows:<install-dependencies>on
-        ;
-
     local loc = "../../../dist/lib/python/site-packages/" $(location) ;
     install $(loc:J) : $(pyd) ;
 }
 
+fost-install-loc .. : ../Boost//boost-python-dll ;
 build-project Cpp/fost-python-test/ ;
 build-project Cpp/fost-crypto-py/ ;
 build-project Cpp/fost-internet-py/ ;

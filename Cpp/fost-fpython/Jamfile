@@ -7,7 +7,6 @@ fost-exe fpython
         ../../Cpp/fost-python/
         fpython.cpp
     ;
-fost-install fpython ;
 
 rule run-fpython ( testname ) {
     local testfile = $(testname) ".py" ;
