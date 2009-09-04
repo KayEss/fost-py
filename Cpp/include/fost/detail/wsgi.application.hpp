@@ -30,7 +30,7 @@ namespace fostlib {
                 public:
                     explicit application( const string &python_application_name );
 
-                    std::auto_ptr< mime > operator () ( http::server::request &, boost::python::dict environment ) const;
+                    std::auto_ptr< mime > operator () ( http::server::request & ) const;
             };
 
 

@@ -36,7 +36,10 @@ namespace {
 fostlib::python::wsgi::application::application( const string &appname ) {
     std::size_t last_dot = appname.find_last_of(".");
     if ( last_dot == string::npos )
-        throw exceptions::not_implemented("The application name must include a . as there must be a module to import it from", appname);
+        throw exceptions::not_implemented("Not implemented error handling\n"
+            "The application name must include a . as there must be a module to import it from", appname
+        );
+
     m_module = boost::python::import(coerce< boost::python::str >(appname.substr(0, last_dot)));
     m_application = boost::python::getattr(m_module, coerce< boost::python::str >(appname.substr(last_dot + 1)));
     boost::python::class_< wsgi_response, boost::shared_ptr< wsgi_response >, boost::noncopyable >(
@@ -46,17 +49,27 @@ fostlib::python::wsgi::application::application( const string &appname ) {
     ;
 }
 
-std::auto_ptr< mime > fostlib::python::wsgi::application::operator () (
-    http::server::request &req, boost::python::dict environ
-) const {
+std::auto_ptr< mime > fostlib::python::wsgi::application::operator () (http::server::request &req) const {
     // Set up the environment for the request
+    boost::python::dict environ;
+    environ["wsgi.version"] = boost::python::make_tuple(1, 0);
+    environ["wsgi.url_scheme"] = boost::python::str("http");
+    environ["wsgi.multithread"] = false;
+    environ["wsgi.multiprocess"] = false;
+    environ["wsgi.run_once"] = false;
+
+    environ["SCRIPT_NAME"] = boost::python::str();
     environ["PATH_INFO"] = boost::python::str(req.file_spec().underlying().underlying());
+    environ["SERVER_NAME"] = boost::python::str("localhost");
+    environ["SERVER_PORT"] = boost::python::str(coerce< string >( 8001 ));
+
     for ( mime::mime_headers::const_iterator header( req.data().headers().begin() ); header != req.data().headers().end(); ++header ) {
         std::string name = replaceAll(header->first, L"-", L"_").std_str();
         for ( std::string::iterator c(name.begin()); c != name.end(); ++c)
             *c = std::toupper(*c);
         environ["HTTP_" + name] = header->second.value();
     }
+
     // Process the request
     boost::shared_ptr< wsgi_response > response( new wsgi_response );
     boost::python::object response_object = boost::python::object(response);
@@ -67,4 +80,3 @@ std::auto_ptr< mime > fostlib::python::wsgi::application::operator () (
         result += *i;
     return response->response;
 }
-
