@@ -43,7 +43,11 @@ host::host() {
     }
 }
 host::~host() {
-    Py_Finalize();
+    try {
+        Py_Finalize();
+    } catch ( ... ) {
+        fostlib::absorbException();
+    }
 }
 
 
