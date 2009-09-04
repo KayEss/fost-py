@@ -19,20 +19,17 @@ using namespace fostlib;
 
 
 namespace {
-    /*
-        Because g_response is currently global it must be protected in case this application gets used in a threaded
-        environment.
-    */
-    boost::mutex g_mutex;
-    std::auto_ptr< mime > g_response;
+    struct wsgi_response : boost::noncopyable {
+        std::auto_ptr< mime > response;
 
-    boost::python::object start_response(boost::python::object status, boost::python::list headers) {
-        mime::mime_headers response_headers;
-        for ( boost::python::stl_input_iterator<boost::python::tuple> i(headers), e; i != e; ++i )
-            response_headers.set( boost::python::extract<string>((*i)[0])(), boost::python::extract<string>((*i)[1])() );
-        g_response = std::auto_ptr< mime >( new text_body( string("No body yet"), response_headers, L"text/plain" ) );
-        return boost::python::object();
-    }
+        boost::python::object start_response(boost::python::object status, boost::python::list headers) {
+            mime::mime_headers response_headers;
+            for ( boost::python::stl_input_iterator<boost::python::tuple> i(headers), e; i != e; ++i )
+                response_headers.set( boost::python::extract<string>((*i)[0])(), boost::python::extract<string>((*i)[1])() );
+            response = std::auto_ptr< mime >( new text_body( string("No body yet"), response_headers, L"text/plain" ) );
+            return boost::python::object();
+        }
+    };
 }
 
 
@@ -42,6 +39,11 @@ fostlib::python::wsgi::application::application( const string &appname ) {
         throw exceptions::not_implemented("The application name must include a . as there must be a module to import it from", appname);
     m_module = boost::python::import(coerce< boost::python::str >(appname.substr(0, last_dot)));
     m_application = boost::python::getattr(m_module, coerce< boost::python::str >(appname.substr(last_dot + 1)));
+    boost::python::class_< wsgi_response, boost::shared_ptr< wsgi_response >, boost::noncopyable >(
+        "wsgi_response", boost::python::no_init
+    )
+        .def("start_response", &wsgi_response::start_response)
+    ;
 }
 
 std::auto_ptr< mime > fostlib::python::wsgi::application::operator () (
@@ -56,12 +58,13 @@ std::auto_ptr< mime > fostlib::python::wsgi::application::operator () (
         environ["HTTP_" + name] = header->second.value();
     }
     // Process the request
-    std::auto_ptr< mime > response;
-    string result;
-    boost::mutex::scoped_lock lock(g_mutex); // Protect g_response
-    boost::python::object strings = m_application(environ, start_response);
-    for ( boost::python::stl_input_iterator<string> i(strings), e; i != e; ++i )
+    boost::shared_ptr< wsgi_response > response( new wsgi_response );
+    boost::python::object response_object = boost::python::object(response);
+
+    boost::python::object strings = m_application(environ, boost::python::getattr(response_object, "start_response"));
+    utf8string result;
+    for ( boost::python::stl_input_iterator<utf8string> i(strings), e; i != e; ++i )
         result += *i;
-    return g_response;
+    return response->response;
 }
 
