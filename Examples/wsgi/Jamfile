@@ -6,5 +6,6 @@ fost-exe fwsgi
         ../../../fost-internet/Cpp/fost-inet/
         ../../Cpp/fost-pyhost/
         ../../Cpp/fost-python/
+        ../../Cpp/fost-wsgi/
         wsgi.cpp
     ;

@@ -7,6 +7,7 @@
 
 
 #include <fost/pyhost>
+#include <fost/wsgi>
 #include <fost/cli>
 #include <fost/main>
 #include <fost/internet>
@@ -21,9 +22,6 @@ namespace {
     setting< int > c_port( L"fwsgi", L"Server", L"Port", 8001, true );
 
     setting< string > c_application( L"fwsgi", L"WSGI", L"Application", "wsgiref.simple_server.demo_app", true );
-
-    void start_response(boost::python::object status, boost::python::list headers) {
-    }
 }
 
 
@@ -38,19 +36,13 @@ FSL_MAIN(
     fostlib::python::inproc_host host;
 
     // Find the Python function that corresponds to the application
-    string appname = c_application.value();
-    std::size_t last_dot = appname.find_last_of(".");
-    if ( last_dot == string::npos )
-        throw exceptions::not_implemented("The application name must include a . as there must be a module to import it from", appname);
-    boost::python::object module = boost::python::import(coerce< boost::python::str >(appname.substr(0, last_dot)));
-    boost::python::object app = boost::python::getattr(module, coerce< boost::python::str >(appname.substr(last_dot + 1)));
+    python::wsgi::application app( c_application.value() );
 
     // Keep serving forever
     for ( bool process( true ); process; ) {
         std::auto_ptr< http::server::request > req( server() );
         o << req->method() << L" " << req->file_spec() << std::endl;
-        boost::python::dict environ;
-        app(environ, start_response);
+        (*req)( *app(*req) );
     }
     return 0;
 }
