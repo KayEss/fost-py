@@ -21,7 +21,7 @@ FSL_MAIN_INTERPRETER(
     /*
         We want to load the INI file for the script before the INI file on the command line
         This means we have to load the script one and then load the ini one so its
-        settings get layered ontop.
+        settings get layered on top.
         This has the side effect of allowing the script's INI file to override the interpreter's INI
         file if no -i switch is provided.
     */
@@ -60,5 +60,6 @@ FSL_MAIN_INTERPRETER(
         PyErr_Print();
     }
 
+    Py_Finalize();
     return 0;
 }
