@@ -56,7 +56,7 @@ fostlib::python::wsgi::application::application( const string &appname ) {
     std::size_t last_dot = appname.find_last_of(".");
     if ( last_dot == string::npos )
         throw exceptions::not_implemented("Not implemented error handling\n"
-            "The application name must include a . as there must be a module to import it from", appname
+            "The application name must include a . (dot) as there must be a module to import it from", appname
         );
 
     m_module = boost::python::import(coerce< boost::python::str >(appname.substr(0, last_dot)));
