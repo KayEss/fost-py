@@ -11,7 +11,6 @@
 #include <fost/threading>
 #include <fost/detail/wsgi.application.hpp>
 
-#include <boost/lambda/bind.hpp>
 #include <boost/python/stl_iterator.hpp>
 
 
@@ -19,6 +18,26 @@ using namespace fostlib;
 
 
 namespace {
+    struct wsgi_mime : public mime {
+        wsgi_mime( const mime_headers &h )
+        : mime( h, h.exists("Content-Type") ? h["Content-Type"].value() : "text/plain" ) {
+        }
+        boost::python::object output_iterator;
+        struct const_iterator : public iterator_implementation {
+            const_memory_block operator () () {
+                throw exceptions::not_implemented("wsgi_mime::const_iterator::operator () ()");
+            }
+        };
+        std::auto_ptr<fostlib::mime::iterator_implementation> iterator() const {
+            throw exceptions::not_implemented("wsgi_mime::iterator() const");
+        }
+        bool boundary_is_ok( const string &boundary ) const {
+            throw exceptions::not_implemented("wsgi_mime::boundary_is_ok( const string &boundary ) const");
+        }
+        std::ostream &print_on( std::ostream & ) const {
+            throw exceptions::not_implemented("wsgi_mime::print_on( std::ostream & ) const");
+        }
+    };
     struct wsgi_response : boost::noncopyable {
         std::auto_ptr< mime > response;
 
@@ -26,7 +45,7 @@ namespace {
             mime::mime_headers response_headers;
             for ( boost::python::stl_input_iterator<boost::python::tuple> i(headers), e; i != e; ++i )
                 response_headers.set( boost::python::extract<string>((*i)[0])(), boost::python::extract<string>((*i)[1])() );
-            response = std::auto_ptr< mime >( new text_body( string("No body yet"), response_headers, L"text/plain" ) );
+            response = std::auto_ptr< mime >( new wsgi_mime( response_headers ) );
             return boost::python::object();
         }
     };
