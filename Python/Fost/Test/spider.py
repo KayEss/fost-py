@@ -63,7 +63,10 @@ class Spider(object):
                     submit, query = build_form_query(self, form, response.url)
                     if form_data.has_key('data'):
                         for k, v in form_data['data'].items():
-                            query[k] = v
+                            if v is None:
+                                if query.has_key(k): query.pop(k)
+                            else:
+                                query[k] = v
                     if submit:
                         if form.get('method', 'get').lower() == 'get':
                             spider.spider_test(urlparse.urljoin(response.url, u'%s?%s' % (form['action'], x_www_form_urlencoded(query))))
