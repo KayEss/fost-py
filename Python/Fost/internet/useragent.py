@@ -57,11 +57,13 @@ class agent(object):
             #print document
         return self.opener.open(urllib2.Request(self.url, data, headers))
 
-    def process(self, url, configuration = {"parse_result":True}, data = None):
+    def process(self, url, configuration = {}, data = None):
         """
             Processes a JSON request configuration starting at the specified URL with the specified body
         """
         try:
+            #print "Configuration", configuration
+            #print "Data", data
             from BeautifulSoup import BeautifulSoup
             response = self.fetch(url, data, configuration.get("headers", {}))
             response.mime_type = response.headers.get('Content-Type', ';').split(';')[0]

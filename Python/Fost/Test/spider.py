@@ -60,22 +60,7 @@ class Spider(object):
                         form_data = spider_url_data['forms'][form_id]
                     else:
                         form_data = spider_url_data
-                    submit, query = build_form_query(self, form, response.url)
-                    if form_data.has_key('data'):
-                        for k, v in form_data['data'].items():
-                            if v is None:
-                                if query.has_key(k): query.pop(k)
-                            else:
-                                query[k] = v
-                    if submit:
-                        if form.get('method', 'get').lower() == 'get':
-                            spider.spider_test(urlparse.urljoin(response.url, u'%s?%s' % (form['action'], x_www_form_urlencoded(query))))
-                        else:
-                            self.links(spider, spider.agent.process(
-                                urlparse.urljoin(response.url, form['action']),
-                                spider_url_data,
-                                x_www_form_urlencoded(query)
-                            ))
+                    spider.process_form(response, form, form_data, lambda s, r: r.soup)
         def test_runTest(self):
             self.process(spider.agent.process(url, spider.url_data(url), data))
 
@@ -96,18 +81,33 @@ class Spider(object):
                 spider.url_data(url)['remaining'] -= 1
                 spider.addTest(url, data)
 
-    def test_form(spider, url, form_id, data = {}, check_fn = lambda r: (True, 'No error')):
-        url_data = {
-            'use_forms': True,
-            form_id: {
-                'data': data
-            },
-        }
-        def post_get(spider, response):
-            ok, error = check_fn(response)
-            assert ok, error or "Check function returned False"
-            return response.soup
-        spider.addTest(url, None, post_get, lambda u: url_data)
+    def test_form(spider, url, form_id, data = {}, check_fn = lambda s, r: r.soup):
+        response = spider.agent.process(url)
+        form = response.soup.find(id=form_id)
+        spider.process_form(response, form, data, check_fn)
+
+    def process_form(spider, page_response, form, data = {}, check_fn = lambda s, r: r.soup):
+        assert form, page_response.soup
+        submit, query = build_form_query(spider, form, page_response.url)
+        for k, v in data.items():
+            if v is None:
+                if query.has_key(k): query.pop(k)
+            else:
+                query[k] = v
+        if form.get('method', 'get').lower() == 'get':
+            response = spider.agent.process(
+                urlparse.urljoin(page_response.url, u'%s?%s' % (form['action'], x_www_form_urlencoded(query)))
+            )
+        elif submit:
+            response = spider.agent.process(
+                urlparse.urljoin(page_response.url, form['action']),
+                {},
+                x_www_form_urlencoded(query)
+            )
+        else:
+            return None
+        check_fn(spider, response)
+        return response
 
 spider_instance = Spider()
 
@@ -138,12 +138,12 @@ def test_response(test, response):
     return response
 
 
-def build_form_query(test, form, base_url, form_data = {}, submit_button = None):
+def build_form_query(test, form, base_url, form_data = {}):
     query, submits, radios = {}, [], {}
-    test.assert_(form.has_key('action') and form['action'], u'Empty action in %s' % form)
+    assert form.has_key('action') and form['action'], u'Empty action in %s' % form
     for ta in form.findAll('textarea'):
-        test.assert_(ta.has_key('name'), u'%s in %s' % (ta, base_url))
-        test.assert_(len(ta.contents) <= 1, u"Content of a textarea should just be some text\n" % ta.contents)
+        assert ta.has_key('name'), u'%s in %s' % (ta, base_url)
+        assert len(ta.contents) <= 1, u"Content of a textarea should just be some text\n" % ta.contents
         if len(ta.contents) == 1:
             [query[ta['name']]] = ta.contents
     for inp in form.findAll('input'):
@@ -154,14 +154,14 @@ def build_form_query(test, form, base_url, form_data = {}, submit_button = None)
             if inp.has_key('checked') and inp.get('disabled', 'false').lower() != 'true':
                 query[inp['name']] = inp.get('value', "")
         elif not input_type == "reset":
-            test.assert_(inp.has_key('name'), u'%s in %s' % (inp, base_url))
+            assert inp.has_key('name'), u'%s in %s' % (inp, base_url)
             query[inp['name']] = inp.get('value', "")
     for select in form.findAll('select'):
-        test.assert_(select.has_key('name'), u'Select in form at %s has no name\n%s' % (base_url, select))
+        assert select.has_key('name'), u'Select in form at %s has no name\n%s' % (base_url, select)
         options = select.findAll('option')
-        test.assert_(len(options), u"No options found in select at %s" % base_url)
+        assert len(options), u"No options found in select at %s" % base_url
         for option in options:
-            test.assert_(option.has_key('value'), u'No value found for option %s in select at %s' % (option, base_url))
+            assert option.has_key('value'), u'No value found for option %s in select at %s' % (option, base_url)
             if option.get('selected', None):
                 query[select['name']] = option['value']
         if not query.has_key(select['name']) and len(options):
