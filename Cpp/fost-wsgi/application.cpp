@@ -39,6 +39,13 @@ namespace {
         : mime( h, h.exists("Content-Type") ? h["Content-Type"].value() : "text/plain" ), start_response_illegal( false ) {
         }
 
+        /*
+            There are some things we can do to help to optimize things after we know what the headers
+            will be and before we start to send data. Each of these should be optional (controlled through settings).
+        */
+        void optimize() {
+        }
+
         struct iterator_wrapper : public iterator_implementation {
             bool sent_first;
             const boost::python::str &first;
@@ -158,5 +165,6 @@ std::auto_ptr< mime > fostlib::python::wsgi::application::operator () (http::ser
     response->response->output_iterator = strings;
     response->response->current = current;
     response->response->end = end;
+    response->response->optimize();
     return std::auto_ptr< mime >( response->response.release() );
 }

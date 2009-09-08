@@ -1,0 +1,9 @@
+
+fost-smoke-test fost-wsgi-test-smoke
+    :
+        ../../../fost-internet/Cpp/fost-inet/
+        ../fost-pyhost/
+        ../fost-wsgi/
+    :
+        simple.cpp
+    ;

@@ -42,6 +42,7 @@ build-project Cpp/fost-python/ ;
 build-project Cpp/fost-python-test/ ;
 build-project Cpp/fost-settings-py/ ;
 build-project Cpp/fost-wsgi/ ;
+build-project Cpp/fost-wsgi-test/ ;
 build-project Python/ ;
 
 alias examples
