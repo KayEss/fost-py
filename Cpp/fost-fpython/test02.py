@@ -4,8 +4,7 @@
 # See accompanying file LICENSE_1_0.txt or copy at
 #     http://www.boost.org/LICENSE_1_0.txt
 
-import sys
-sys.path.append(r'Python')
+print "Test 02"
 
-from Fost.settings import database
-print "Banner display is", "on" if database()['fpython', 'Banner'] else "off"
+def main():
+    import sys

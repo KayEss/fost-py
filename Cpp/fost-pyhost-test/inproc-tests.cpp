@@ -14,11 +14,8 @@ FSL_TEST_SUITE( inproc );
 
 
 FSL_TEST_FUNCTION( singleton ) {
-    {
-        fostlib::python::inproc_host host1;
-        //FSL_CHECK_EXCEPTION(fostlib::python::inproc_host host2, fostlib::exceptions::not_implemented&);
-    }
-    fostlib::python::inproc_host host;
+    fostlib::python::inproc_host host1;
+    FSL_CHECK_EXCEPTION(fostlib::python::inproc_host host2, fostlib::exceptions::not_implemented&);
 }
 
 

@@ -82,16 +82,21 @@ void fostlib::python::inproc_host::operator () (
     const boost::filesystem::wpath &f,
     boost::python::list args, boost::python::dict kwargs
 ) {
-    boost::python::exec_file(
-        fostlib::coerce< fostlib::utf8string >( fostlib::coerce< fostlib::string >( f.string() ) ).c_str(),
-        g_host->main_namespace, g_host->main_namespace
-    );
+    try {
+        boost::python::exec_file(
+            fostlib::coerce< fostlib::utf8string >( fostlib::coerce< fostlib::string >( f.string() ) ).c_str(),
+            g_host->main_namespace, g_host->main_namespace
+        );
 
-    // Find main and call it through a lambda to handle the arguments for us
-    if ( !g_host->main_namespace.has_key( "main" ) )
-        throw fostlib::exceptions::null( L"No main() in the loaded Python file" );
-    boost::python::object main_func = g_host->main_namespace[ "main" ];
-    boost::python::eval(
-        "lambda f, a, k: f(*a, **k)", g_host->main_namespace, g_host->main_namespace
-    )( main_func, args, kwargs );
+        // Find main and call it through a lambda to handle the arguments for us
+        if ( !g_host->main_namespace.has_key( "main" ) )
+            throw fostlib::exceptions::null( L"No main() in the loaded Python file" );
+        boost::python::object main_func = g_host->main_namespace[ "main" ];
+        boost::python::eval(
+            "lambda f, a, k: f(*a, **k)", g_host->main_namespace, g_host->main_namespace
+        )( main_func, args, kwargs );
+    } catch ( boost::python::error_already_set& ) {
+        PyErr_Print();
+        throw exceptions::not_implemented("Boost.Python error handling when executing a file");
+    }
 }

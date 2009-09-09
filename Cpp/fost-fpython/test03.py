@@ -4,10 +4,7 @@
 # See accompanying file LICENSE_1_0.txt or copy at
 #     http://www.boost.org/LICENSE_1_0.txt
 
-print "Test 01"
+print "Test 03"
 
-def main():
-    print "Test 01"
-
-if __name__ == "__main__":
-    assert True, __name__
+# Generate an error
+stop asdf

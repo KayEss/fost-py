@@ -9,10 +9,11 @@ fost-exe fpython
         fpython.cpp
     ;
 
-rule run-fpython ( testname ) {
+
+rule run-fpython-execute ( runrule : testname ) {
     local testfile = $(testname) ".py" ;
     local fullname = "fpython-run-" $(testname) ;
-    run fpython
+    $(runrule) fpython
         :
         :
             $(testfile:J)
@@ -22,5 +23,14 @@ rule run-fpython ( testname ) {
         ;
 }
 
+rule run-fpython-fail ( testname ) {
+    run-fpython-execute run-fail : $(testname) ;
+}
+
+rule run-fpython ( testname ) {
+    run-fpython-execute  run : $(testname) ;
+}
+
 run-fpython test01 ;
 run-fpython test02 ;
+run-fpython-fail test03 ;
