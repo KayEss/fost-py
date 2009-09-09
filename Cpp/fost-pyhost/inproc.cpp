@@ -38,12 +38,14 @@ host::host() {
         main_module = boost::python::import( "__main__" );
         main_namespace = boost::python::dict(main_module.attr( "__dict__" ));
     } catch ( ... ) {
+        PyErr_Clear();
         Py_Finalize();
         throw;
     }
 }
 host::~host() {
     try {
+        PyErr_Clear();
         Py_Finalize();
     } catch ( ... ) {
         fostlib::absorbException();
@@ -63,6 +65,19 @@ fostlib::python::inproc_host::~inproc_host() {
 }
 
 
+boost::python::object fostlib::python::inproc_host::p_eval_impl( const string &code ) {
+    try {
+        return boost::python::eval(boost::python::str(code), g_host->main_namespace, g_host->main_namespace);
+    } catch ( boost::python::error_already_set& ) {
+        PyErr_Print();
+        throw exceptions::not_implemented("Boost.Python error handling for eval");
+    }
+}
+
+void fostlib::python::inproc_host::operator () ( const string &code ) {
+    boost::python::exec( boost::python::str(code), g_host->main_namespace, g_host->main_namespace );
+}
+
 void fostlib::python::inproc_host::operator () (
     const boost::filesystem::wpath &f,
     boost::python::list args, boost::python::dict kwargs
@@ -76,5 +91,7 @@ void fostlib::python::inproc_host::operator () (
     if ( !g_host->main_namespace.has_key( "main" ) )
         throw fostlib::exceptions::null( L"No main() in the loaded Python file" );
     boost::python::object main_func = g_host->main_namespace[ "main" ];
-    boost::python::eval( "lambda f, a, k: f(*a, **k)" )( main_func, args, kwargs );
+    boost::python::eval(
+        "lambda f, a, k: f(*a, **k)", g_host->main_namespace, g_host->main_namespace
+    )( main_func, args, kwargs );
 }

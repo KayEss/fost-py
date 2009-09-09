@@ -21,11 +21,18 @@ namespace fostlib {
 
 
         class FOST_PYHOST_DECLSPEC inproc_host : boost::noncopyable {
+            boost::python::object p_eval_impl(const string &expression);
             public:
                 inproc_host();
                 ~inproc_host();
 
+                void operator () ( const string &python_code );
                 void operator () ( const boost::filesystem::wpath &file, boost::python::list args, boost::python::dict kwargs );
+
+                template< typename T >
+                T eval( const string &expression ) {
+                    return boost::python::extract< T >( p_eval_impl(expression) )();
+                }
         };
 
 
