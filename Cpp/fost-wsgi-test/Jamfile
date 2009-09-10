@@ -1,6 +1,7 @@
 
 fost-smoke-test fost-wsgi-test-smoke
     :
+        ../../../Boost//boost-python-dll
         ../../../fost-internet/Cpp/fost-inet/
         ../fost-pyhost/
         ../fost-wsgi/
