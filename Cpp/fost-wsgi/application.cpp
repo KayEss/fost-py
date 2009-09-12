@@ -135,7 +135,7 @@ std::auto_ptr< mime > fostlib::python::wsgi::application::operator () (http::ser
     boost::python::dict environ;
     environ["wsgi.version"] = boost::python::make_tuple(1, 0);
     environ["wsgi.url_scheme"] = boost::python::str("http");
-    environ["wsgi.multithread"] = false;
+    environ["wsgi.multithread"] = true;
     environ["wsgi.multiprocess"] = false;
     environ["wsgi.run_once"] = false;
 
