@@ -7,7 +7,7 @@
 
 
 #include "fost-wsgi.hpp"
-#include <fost/python>
+#include <fost/pyhost>
 #include <fost/threading>
 #include <fost/detail/wsgi.application.hpp>
 
@@ -62,6 +62,7 @@ namespace {
                 return const_memory_block(this_block.c_str(), this_block.c_str() + this_block.length());
             }
             const_memory_block operator () () {
+                fostlib::python::inproc_host::gil gil;
                 if ( !sent_first ) {
                     sent_first = true;
                     return from_python_str(first);
@@ -131,6 +132,7 @@ fostlib::python::wsgi::application::application( const string &appname ) {
 }
 
 std::auto_ptr< mime > fostlib::python::wsgi::application::operator () (http::server::request &req) const {
+    fostlib::python::inproc_host::gil gil;
     // Set up the environment for the request
     boost::python::dict environ;
     environ["wsgi.version"] = boost::python::make_tuple(1, 0);

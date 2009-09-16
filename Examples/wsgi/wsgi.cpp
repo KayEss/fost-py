@@ -47,9 +47,7 @@ FSL_MAIN(
     for ( bool process( true ); process; ) {
         boost::shared_ptr< http::server::request > req( server().release() );
         o << req->method() << L" " << req->file_spec() << " peak threads: " << pool.peak_used() << std::endl;
-        // Threaded version breaks in the Python libraries when under siege
-        //pool.f<bool>( boost::lambda::bind( service, boost::ref(app), req ) );
-        service(app, req);
+        pool.f<bool>( boost::lambda::bind( service, boost::ref(app), req ) );
     }
     return 0;
 }

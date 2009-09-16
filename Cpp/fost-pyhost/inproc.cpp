@@ -29,7 +29,10 @@ namespace {
 
 host::host() {
     Py_Initialize();
-
+    PyEval_InitThreads();
+    // The previous call has acquired the GIL, but we don't need it here as we have our own
+    // when this host object is created so we can release it straight away.
+    PyEval_ReleaseLock();
     try {
         fostlib::python_string_registration();
         fostlib::python_json_registration();
@@ -99,4 +102,17 @@ void fostlib::python::inproc_host::operator () (
         PyErr_Print();
         throw exceptions::not_implemented("Boost.Python error handling when executing a file");
     }
+}
+
+
+/*
+    fostlib::python::inproc_host::gil
+*/
+
+
+fostlib::python::inproc_host::gil::gil()
+: gstate( PyGILState_Ensure() ) {
+}
+fostlib::python::inproc_host::gil::~gil() {
+    PyGILState_Release(gstate);
 }

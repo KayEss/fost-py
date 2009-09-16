@@ -33,6 +33,14 @@ namespace fostlib {
                 T eval( const string &expression ) {
                     return boost::python::extract< T >( p_eval_impl(expression) )();
                 }
+
+                // Use this around code that makes use of the Boost.Python code to avoid Python errors
+                class FOST_PYHOST_DECLSPEC gil {
+                    PyGILState_STATE gstate;
+                    public:
+                        gil();
+                        ~gil();
+                };
         };
 
 
