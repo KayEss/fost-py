@@ -8,8 +8,8 @@
 
 #include "fost-inproc.hpp"
 #include <fost/python>
-#include <fost/detail/inproc.hpp>
 #include <fost/threading>
+#include <fost/detail/inproc.hpp>
 
 
 namespace {
@@ -29,12 +29,11 @@ namespace {
 
 host::host() {
     Py_Initialize();
-    PyEval_InitThreads();
     /*
-        The previous call has acquired the GIL, but we don't need it here as we have our own
-        when this host object is created so we can release it straight away.
+        The followiing call allows us to use threads, but at the same time, it leaves us holding the GIL.
+        This is really kind of ugly as we can't easily use a RAII pattern to manage the GIL.
     */
-    //PyEval_ReleaseLock();
+    PyEval_InitThreads();
     try {
         fostlib::python_string_registration();
         fostlib::python_json_registration();

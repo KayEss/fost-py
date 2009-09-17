@@ -23,8 +23,8 @@ namespace {
 
     setting< string > c_application( L"fwsgi", L"WSGI", L"Application", "wsgiref.simple_server.demo_app", true );
 
-    bool service( python::wsgi::application &app, boost::shared_ptr< http::server::request > req ) {
-        (*req)( *app(*req) );
+    bool service( python::wsgi::application &app, http::server::request &req ) {
+        req( *app(req) );
         return true;
     }
 }
@@ -34,8 +34,6 @@ FSL_MAIN(
     L"fwsgi",
     L"Simple HTTP WSGI server\nCopyright (c) 2008-2009, Felspar Co. Ltd."
 )( fostlib::ostream &o, fostlib::arguments &args ) {
-    // Create a worker pool to service the requests
-    workerpool pool;
     // Work out the IP and port bindings
     http::server server( host( args[1].value(c_host.value()) ), c_port.value() );
     o << L"Answering requests on http://" << server.binding() << L":" << server.port() << L"/" << std::endl;
@@ -43,11 +41,13 @@ FSL_MAIN(
     fostlib::python::inproc_host host;
     // Build the application object that will handle the web service
     python::wsgi::application app( c_application.value() );
+    /*
+        Creating the inproc_host instance has left us holding the GIL. If we don't drop it before we try
+        to service new threads all sorts of horrid things are going to happen (which involve the word "deadlock").
+    */
+    PyEval_ReleaseLock();
     // Keep serving forever
-    for ( bool process( true ); process; ) {
-        boost::shared_ptr< http::server::request > req( server().release() );
-        o << req->method() << L" " << req->file_spec() << " peak threads: " << pool.peak_used() << std::endl;
-        pool.f<bool>( boost::lambda::bind( service, boost::ref(app), req ) );
-    }
+    server( boost::lambda::bind( service, boost::ref(app), boost::ref(boost::lambda::_1) ) );
+    // We'll never get here
     return 0;
 }
