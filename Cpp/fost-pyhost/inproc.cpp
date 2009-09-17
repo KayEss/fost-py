@@ -30,9 +30,11 @@ namespace {
 host::host() {
     Py_Initialize();
     PyEval_InitThreads();
-    // The previous call has acquired the GIL, but we don't need it here as we have our own
-    // when this host object is created so we can release it straight away.
-    PyEval_ReleaseLock();
+    /*
+        The previous call has acquired the GIL, but we don't need it here as we have our own
+        when this host object is created so we can release it straight away.
+    */
+    //PyEval_ReleaseLock();
     try {
         fostlib::python_string_registration();
         fostlib::python_json_registration();
@@ -69,6 +71,7 @@ fostlib::python::inproc_host::~inproc_host() {
 
 
 boost::python::object fostlib::python::inproc_host::p_eval_impl( const string &code ) {
+    fostlib::python::inproc_host::gil gil;
     try {
         return boost::python::eval(boost::python::str(code), g_host->main_namespace, g_host->main_namespace);
     } catch ( boost::python::error_already_set& ) {
@@ -78,7 +81,13 @@ boost::python::object fostlib::python::inproc_host::p_eval_impl( const string &c
 }
 
 void fostlib::python::inproc_host::operator () ( const string &code ) {
-    boost::python::exec( boost::python::str(code), g_host->main_namespace, g_host->main_namespace );
+    fostlib::python::inproc_host::gil gil;
+    try {
+        boost::python::exec( boost::python::str(code), g_host->main_namespace, g_host->main_namespace );
+    } catch ( boost::python::error_already_set& ) {
+        PyErr_Print();
+        throw exceptions::not_implemented("Boost.Python error handling for exec");
+    }
 }
 
 void fostlib::python::inproc_host::operator () (
@@ -86,10 +95,8 @@ void fostlib::python::inproc_host::operator () (
     boost::python::list args, boost::python::dict kwargs
 ) {
     try {
-        boost::python::exec_file(
-            fostlib::coerce< fostlib::utf8string >( fostlib::coerce< fostlib::string >( f.string() ) ).c_str(),
-            g_host->main_namespace, g_host->main_namespace
-        );
+        boost::python::str filename( fostlib::coerce< fostlib::utf8string >( fostlib::coerce< fostlib::string >( f.string() ) ).c_str() );
+        boost::python::exec_file(filename, g_host->main_namespace, g_host->main_namespace);
 
         // Find main and call it through a lambda to handle the arguments for us
         if ( !g_host->main_namespace.has_key( "main" ) )
