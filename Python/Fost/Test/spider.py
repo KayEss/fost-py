@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+# Copyright 2008-2009, Felspar Co Ltd. http://fost.3.felspar.com/
+# Distributed under the Boost Software License, Version 1.0.
+# See accompanying file LICENSE_1_0.txt or copy at
+#     http://www.boost.org/LICENSE_1_0.txt
+
 import cookielib, glob, os, random, unittest, urllib, urllib2, urlparse
 from BeautifulSoup import BeautifulSoup
 from Fost.internet import x_www_form_urlencoded

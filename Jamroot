@@ -40,6 +40,7 @@ build-project Cpp/fost-pyhost/ ;
 build-project Cpp/fost-pyhost-test/ ;
 build-project Cpp/fost-python/ ;
 build-project Cpp/fost-python-test/ ;
+build-project Cpp/fost-schema-py/ ;
 build-project Cpp/fost-settings-py/ ;
 build-project Cpp/fost-wsgi/ ;
 build-project Cpp/fost-wsgi-test/ ;
