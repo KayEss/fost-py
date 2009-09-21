@@ -109,7 +109,7 @@ namespace {
             for ( boost::python::stl_input_iterator<boost::python::tuple> i(headers), e; i != e; ++i )
                 response_headers.set( boost::python::extract<string>((*i)[0])(), boost::python::extract<string>((*i)[1])() );
             response = std::auto_ptr< wsgi_mime >( new wsgi_mime( response_headers ) );
-            return boost::python::object(write);
+            return boost::python::object(&write);
         }
     };
 }
