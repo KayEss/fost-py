@@ -4,7 +4,11 @@
 # See accompanying file LICENSE_1_0.txt or copy at
 #     http://www.boost.org/LICENSE_1_0.txt
 
-import cookielib, datetime, urllib2, urlparse
+import cookielib
+import datetime
+import urllib2
+import urlparse
+
 from Fost.crypto import sha1_hmac
 from Fost.settings import database
 from _internet import url_filespec_encode, url_filespec_assert_valid
@@ -15,25 +19,42 @@ def fetch(*args, **kwargs):
 
 
 class agent(object):
-    def __init__(self, base = "http://localhost/"):
+    def __init__(
+            self, 
+            base = "http://localhost/", 
+            stop_redirects = True
+        ):
         self.url = base
         # Fost settings for authentication
         self.fost = {}
         # Enable cookie jar
         self.cj = cookielib.LWPCookieJar()
-        class RedirectStop(urllib2.HTTPRedirectHandler):
-            def redirect_request(self, req, fp, code, msg, hdrs, newurl):
-                return None
-        self.opener = urllib2.build_opener(RedirectStop(), urllib2.HTTPCookieProcessor(self.cj))
+        
+        chain_of_responsibility = []
+        if stop_redirects:
+            class RedirectStop(urllib2.HTTPRedirectHandler):
+                def redirect_request(self, req, fp, code, msg, hdrs, newurl):
+                    return None
+            chain_of_responsibility.append(RedirectStop())
+        chain_of_responsibility.append(
+            urllib2.HTTPCookieProcessor(self.cj)
+        )
+        
+        self.opener = urllib2.build_opener(
+            *chain_of_responsibility
+        )
 
     def fost_authenticate(self, key, secret, headers = {}):
-        self.fost['key'] = key
-        self.fost['secret'] = secret
-        self.fost['headers'] = headers
+        self.fost.update(
+            key = key,
+            secret = secret,
+            headers = headers
+        )
 
     def fetch(self, url, data = None, headers = {}):
         """
-            Fetches a single URL using either GET or POST depending on whether a body (data) is present
+            Fetches a single URL using either GET or POST depending on whether
+            a body (data) is present
         """
         self.url = urlparse.urljoin(self.url, url)
         if len(self.fost):
@@ -53,13 +74,17 @@ class agent(object):
             )
             headers['X-FOST-Timestamp'] = utcnow
             headers['X-FOST-Headers'] = signed
-            headers['Authorization'] = "FOST %s:%s" % (self.fost['key'], sha1_hmac(self.fost['secret'], document))
+            headers['Authorization'] = "FOST %s:%s" % (
+                self.fost['key'],
+                sha1_hmac(self.fost['secret'], document)
+            )
             #print document
         return self.opener.open(urllib2.Request(self.url, data, headers))
 
     def process(self, url, configuration = {}, data = None):
         """
-            Processes a JSON request configuration starting at the specified URL with the specified body
+            Processes a JSON request configuration starting at the specified
+            URL with the specified body
         """
         try:
             #print "Configuration", configuration
