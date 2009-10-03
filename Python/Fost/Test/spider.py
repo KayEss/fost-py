@@ -51,10 +51,10 @@ class Spider(object):
         for url in urls:
             self.spider_test(test_url(url))
         self.links = queue_links
-    
+
     def _check_page(self, url):
         self.pages.setdefault(url, dict()).setdefault('remaining', 1)
-        
+
     def url_data(self, url):
         if url.find('?') > 0:
             url = url[:url.find('?')]
@@ -100,9 +100,9 @@ class Spider(object):
                         if form.get('method', 'get').lower() == 'get':
                             spider.spider_test(
                                 urlparse.urljoin(
-                                    response.url, 
+                                    response.url,
                                     u'%s?%s' % (
-                                        form['action'], 
+                                        form['action'],
                                         x_www_form_urlencoded(query)
                                     )
                                 )
@@ -192,7 +192,7 @@ def build_form_query(test, form, base_url, form_data = {}, submit_button = None)
         test.assert_(len(ta.contents) <= 1, u"Content of a textarea should just be some text\n" % ta.contents)
         if len(ta.contents) == 1:
             [query[ta['name']]] = ta.contents
-            
+
     for inp in form.findAll('input'):
         input_type = inp.get('type', 'text')
         if input_type == "submit":
@@ -204,7 +204,7 @@ def build_form_query(test, form, base_url, form_data = {}, submit_button = None)
         elif not input_type == "reset":
             test.assert_(inp.has_key('name'), u'%s in %s' % (inp, base_url))
             query[inp['name']] = inp.get('value', "")
-            
+
     for select in form.findAll('select'):
         test.assert_(select.has_key('name'), u'Select in form at %s has no name\n%s' % (base_url, select))
         options = select.findAll('option')
@@ -228,7 +228,7 @@ def build_form_query(test, form, base_url, form_data = {}, submit_button = None)
 
 def main(path=None, host=None, **kwargs):
     """
-        This spider will start off running queries that it finds in a JSON 
+        This spider will start off running queries that it finds in a JSON
         configuration file.
     """
     print "Havok spider - Copyright (C) 2008-2009 Felspar Co Ltd."
@@ -258,7 +258,7 @@ def main(path=None, host=None, **kwargs):
         )
         if local.has_key(jroot/'fost_authentication'):
             spider.agent.fost_authenticate(
-                local[jroot/'fost_authentication'/'key'], 
+                local[jroot/'fost_authentication'/'key'],
                 local[jroot/'fost_authentication'/'secret'],
                 local[jroot/'fost_authentication'/'headers']
             )
