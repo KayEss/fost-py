@@ -32,19 +32,28 @@ rule py-install ( pyd : location )
 
 
 fost-install-loc .. : ../Boost//boost-python-dll ;
-build-project Cpp/fost-crypto-py/ ;
-build-project Cpp/fost-fpython/ ;
-build-project Cpp/fost-internet-py/ ;
-build-project Cpp/fost-json-py/ ;
-build-project Cpp/fost-pyhost/ ;
-build-project Cpp/fost-pyhost-test/ ;
-build-project Cpp/fost-python/ ;
-build-project Cpp/fost-python-test/ ;
-build-project Cpp/fost-schema-py/ ;
-build-project Cpp/fost-settings-py/ ;
-build-project Cpp/fost-wsgi/ ;
-build-project Cpp/fost-wsgi-test/ ;
-build-project Python/ ;
+
+alias fost
+    :
+        Cpp/fost-crypto-py
+        Cpp/fost-fpython
+        Cpp/fost-internet-py
+        Cpp/fost-json-py
+        Cpp/fost-pyhost
+        Cpp/fost-python
+        Cpp/fost-schema-py
+        Cpp/fost-settings-py
+        Cpp/fost-wsgi
+        Python
+    ;
+
+alias tests
+    :
+        Cpp/fost-pyhost-test
+        Cpp/fost-python-test
+        Cpp/fost-wsgi-test
+    ;
+explicit tests ;
 
 alias examples
     :

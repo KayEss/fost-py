@@ -22,7 +22,7 @@ n = _settings.settings()
 assert n.get("Exception", "Format") == "None"
 
 # Load an ini file and make sure we can read a value from it
-n.file("Cpp/fost-settings-py/test.ini")
+n.file("../fost-py/Cpp/fost-settings-py/test.ini")
 assert n.get("Test ini", "A value") == True
 
 
