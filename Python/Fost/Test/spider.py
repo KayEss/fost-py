@@ -33,17 +33,25 @@ def ignore_links(spider, response):
     return response.soup
 
 class Spider(object):
+    """
+    Does two things:
+        Crawls through pages looking for forms and links.
+        Tests the pages by filling in the forms and loading links.
+    """
     def __init__(
             self,
             urls = [],
             visited = {},
             links = queue_links, # what does this do?
-            stop_redirects = True # passed onto agent
+            stop_redirects = True, # passed onto agent
+            host = None, # defaults to the FOST setting
         ):
         self.agent = agent(stop_redirects = stop_redirects)
         self.suite = unittest.TestSuite()
         self.pages = dict()
-        host = fostsettings["Spider", "host"]
+        if not host:
+            host = fostsettings["Spider", "host"]
+        self.host = host
         from functools import partial
         test_url = partial(urlparse.urljoin, host)
         for url, v in visited.items():
@@ -74,7 +82,7 @@ class Spider(object):
         if not url_data:
             url_data = spider.url_data
         if url[0]=='/':
-            url = urlparse.urljoin(fostsettings["Spider", "host"], url)
+            url = urlparse.urljoin(spider.host, url)
             spider._check_page(url)
         else:
             raise Exception("URLs must be absolute")
