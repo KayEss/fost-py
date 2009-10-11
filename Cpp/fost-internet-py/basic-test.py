@@ -32,6 +32,8 @@ assert _internet.x_www_form_urlencoded({'a':'b'}) == "a=b", _internet.x_www_form
 
 print "Testing url"
 assert unicode(_internet.url()) == "http://localhost/", unicode(_internet.url())
+assert unicode(_internet.url()('/test/')) == "http://localhost/test/", unicode(_internet.url()('/test/'))
+assert unicode(_internet.url()('/test/?k=v')) == "http://localhost/test/?k=v", unicode(_internet.url()('/test/?k=v'))
 
 print "Testing ua_request"
 request = _internet.ua_request("PUT", _internet.url())
