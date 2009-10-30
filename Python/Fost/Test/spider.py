@@ -227,10 +227,7 @@ def build_form_query(spider, form, base_url, form_data = {}, submit_button = Non
         options = select.findAll('option')
         assert len(options), u"No options found in select at %s" % base_url
         for option in options:
-            assert (
-                option.has_key('value'),
-                u'No value found for option %s in select at %s' % (option, base_url)
-            )
+            assert option.has_key('value'), u'No value found for option %s in select at %s' % (option, base_url)
             if option.get('selected', None):
                 query[select['name']] = option['value']
         if not query.has_key(select['name']) and len(options):
