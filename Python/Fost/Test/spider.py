@@ -144,24 +144,33 @@ class Spider(object):
                 spider.url_data(url)['remaining'] -= 1
                 spider.addTest(url, data)
 
-    def test_form(
-            spider,
-            url,
-            form_id,
-            data = {},
-            check_fn = lambda r: (True, 'No error')
-        ):
-        url_data = {
-            'use_forms': True,
-            form_id: {
-                'data': data
-            },
-        }
-        def post_get(spider, response):
-            ok, error = check_fn(response)
-            assert ok, error or "Check function returned False"
-            return response.soup
-        spider.addTest(url, None, post_get, lambda u: url_data)
+    def test_form(spider, url, form_id, data = {}, check_fn = lambda s, r: r.soup):
+        response = spider.agent.process(url)
+        form = response.soup.find(id=form_id)
+        spider.process_form(response, form, data, check_fn)
+
+    def process_form(spider, page_response, form, data = {}, check_fn = lambda s, r: r.soup):
+        assert form, page_response.soup
+        submit, query = build_form_query(spider, form, page_response.url)
+        for k, v in data.items():
+            if v is None:
+                if query.has_key(k): query.pop(k)
+            else:
+                query[k] = v
+        if form.get('method', 'get').lower() == 'get':
+            response = spider.agent.process(
+                urlparse.urljoin(page_response.url, u'%s?%s' % (form['action'], x_www_form_urlencoded(query)))
+            )
+        elif submit:
+            response = spider.agent.process(
+                urlparse.urljoin(page_response.url, form['action']),
+                {},
+                x_www_form_urlencoded(query)
+            )
+        else:
+            return None
+        check_fn(spider, response)
+        return response
 
 spider_instance = Spider()
 
