@@ -201,12 +201,12 @@ def test_response(test, response):
     return response
 
 
-def build_form_query(test, form, base_url, form_data = {}, submit_button = None):
+def build_form_query(spider, form, base_url, form_data = {}, submit_button = None):
     query, submits, radios = {}, [], {}
-    test.assert_(form.has_key('action') and form['action'], u'Empty action in %s' % form)
+    assert form.has_key('action') and form['action'], u'Empty action in %s' % form
     for ta in form.findAll('textarea'):
-        test.assert_(ta.has_key('name'), u'%s in %s' % (ta, base_url))
-        test.assert_(len(ta.contents) <= 1, u"Content of a textarea should just be some text\n" % ta.contents)
+        assert ta.has_key('name'), u'%s in %s' % (ta, base_url)
+        assert len(ta.contents) <= 1, u"Content of a textarea should just be some text\n" % ta.contents
         if len(ta.contents) == 1:
             [query[ta['name']]] = ta.contents
 
@@ -219,15 +219,15 @@ def build_form_query(test, form, base_url, form_data = {}, submit_button = None)
                 and inp.get('disabled', 'false').lower() != 'true':
                 query[inp['name']] = inp.get('value', "")
         elif not input_type == "reset":
-            test.assert_(inp.has_key('name'), u'%s in %s' % (inp, base_url))
+            assert inp.has_key('name'), u'%s in %s' % (inp, base_url)
             query[inp['name']] = inp.get('value', "")
 
     for select in form.findAll('select'):
-        test.assert_(select.has_key('name'), u'Select in form at %s has no name\n%s' % (base_url, select))
+        assert select.has_key('name'), u'Select in form at %s has no name\n%s' % (base_url, select)
         options = select.findAll('option')
-        test.assert_(len(options), u"No options found in select at %s" % base_url)
+        assert len(options), u"No options found in select at %s" % base_url
         for option in options:
-            test.assert_(
+            assert (
                 option.has_key('value'),
                 u'No value found for option %s in select at %s' % (option, base_url)
             )
