@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright 2009, Felspar Co Ltd. http://fost.3.felspar.com/
 # Distributed under the Boost Software License, Version 1.0.
 # See accompanying file LICENSE_1_0.txt or copy at
@@ -14,4 +15,4 @@ assert _json.unparse(12, False) == "12", _json.unparse(12, False)
 assert _json.unparse({}, False) == "{}", _json.unparse({}, False)
 assert _json.unparse(dict(), False) == "{}", _json.unparse({}, False)
 assert _json.unparse([12], False) == "[12]", _json.unparse([12], False)
-
+assert _json.unparse(set([1,2,4]), False) == "[1,2,4]", _json.unparse(set([1,2,4]), False)
