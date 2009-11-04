@@ -18,7 +18,7 @@ std::string url_filespec_encode( const fostlib::string &s ) {
     return coerce< url::filepath_string >( s ).underlying().underlying();
 }
 void url_filespec_assert_valid( const fostlib::string &s ) {
-    url::filepath_string_tag::check_encoded( ascii_string( coerce< utf8string >( s ) ) );
+    url::filepath_string_tag::check_encoded( coerce< ascii_string >( s ) );
 }
 
 

@@ -94,7 +94,7 @@ void fostlib::python::inproc_host::operator () (
     boost::python::list args, boost::python::dict kwargs
 ) {
     try {
-        boost::python::str filename( fostlib::coerce< fostlib::utf8string >( fostlib::coerce< fostlib::string >( f.string() ) ).c_str() );
+        boost::python::str filename( fostlib::coerce< fostlib::string >( f.string() ) );
         boost::python::exec_file(filename, g_host->main_namespace, g_host->main_namespace);
 
         // Find main and call it through a lambda to handle the arguments for us
