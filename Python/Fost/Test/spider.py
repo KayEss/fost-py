@@ -125,7 +125,7 @@ class Spider(object):
                                 x_www_form_urlencoded(query)
                             ))
         def test_runTest(self):
-            self.process(spider.agent.process(url, spider.url_data(url), data))
+            self.process(spider.agent.process(url, url_data(url), data))
 
         testtype = type(str(url), (unittest.TestCase,), dict(
             process = test_process,
