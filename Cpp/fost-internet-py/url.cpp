@@ -18,7 +18,7 @@ std::string url_filespec_encode( const fostlib::string &s ) {
     return coerce< url::filepath_string >( s ).underlying().underlying();
 }
 void url_filespec_assert_valid( const fostlib::string &s ) {
-    url::filepath_string_tag::check_encoded( coerce< ascii_string >( s ) );
+    url::filepath_string_tag::check_encoded( coerce< ascii_printable_string >( s ) );
 }
 
 
@@ -26,7 +26,7 @@ std::string x_www_form_urlencoded( const json &j ) {
     url::query_string qs;
     for ( json::const_iterator i = j.begin(); i != j.end(); ++i )
         qs.append( coerce< string >( i.key() ), coerce< string >( *i ) );
-    return qs.as_string().value( ascii_string() ).underlying();
+    return qs.as_string().value( ascii_printable_string() ).underlying();
 }
 
 
