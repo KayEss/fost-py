@@ -1,3 +1,3 @@
 @echo off
 echo fost-py
-..\bjam toolset=msvc preserve-test-targets=on %*
+..\bjam preserve-test-targets=on %*
