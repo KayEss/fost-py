@@ -1,5 +1,5 @@
 
-python-extension _json :
+python-extension _json_fost :
         ../../../Boost//boost-date_time-dll
         ../../../Boost//boost-python-dll
         ../../../Boost//boost-thread-dll
@@ -15,8 +15,8 @@ python-extension _json :
         <include>../include/
     ;
 
-run-test basic-test : _json basic-test.py ;
-run-test jcursor-test : _json jcursor-test.py ;
-run-test jsondb-test : _json jsondb-test.py ;
+run-test basic-test : _json_fost basic-test.py ;
+run-test jcursor-test : _json_fost jcursor-test.py ;
+run-test jsondb-test : _json_fost jsondb-test.py ;
 
-py-install _json : Fost/json/ ;
+py-install _json_fost : Fost/json/ ;
