@@ -19,7 +19,7 @@ fi
 
 if ../bjam toolset=$TOOLSET  -j$CPUCOUNT `../python.opts.sh` $*
 then {
-    echo fost-py OK
+    echo fost-py $* OK
     exit 0
 } else {
     exit 1
