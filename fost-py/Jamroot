@@ -60,12 +60,3 @@ alias examples
     ;
 explicit examples ;
 
-
-import path ;
-install ../dist/lib/python/site-packages/Fost
-    :
-        [ path.glob-tree Python/Fost : *.* : .svn *.py~ *.pyc *.so ]
-    :
-        <location>$(TOP)/../dist/lib/python/site-packages/Fost
-        <install-source-root>Python/Fost
-    ;
