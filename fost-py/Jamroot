@@ -32,6 +32,9 @@ rule py-install ( pyd : location )
 
 alias fost
     :
+        ../fost-base//fost
+        ../fost-internet//fost
+        ../fost-orm//fost
         Cpp/fost-crypto-py
         Cpp/fost-fpython
         Cpp/fost-internet-py
