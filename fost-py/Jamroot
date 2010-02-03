@@ -49,6 +49,9 @@ alias fost
 
 alias tests
     :
+        ../fost-base//tests
+        ../fost-internet//tests
+        ../fost-orm//tests
         Cpp/fost-pyhost-test
         Cpp/fost-python-test
         Cpp/fost-wsgi-test
@@ -57,7 +60,16 @@ explicit tests ;
 
 alias examples
     :
+        ../fost-base//examples
+        ../fost-internet//examples
+        ../fost-orm//examples
         Examples/wsgi/
     ;
 explicit examples ;
 
+alias all :
+        fost
+        tests
+        examples
+    ;
+explicit all ;
