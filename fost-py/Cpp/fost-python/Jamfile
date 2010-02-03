@@ -9,3 +9,5 @@ lib fost-python :
     ;
 
 fost-install fost-python ;
+
+fost-install ../../../Boost//boost-python-dll ;

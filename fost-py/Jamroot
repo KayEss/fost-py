@@ -30,8 +30,6 @@ rule py-install ( pyd : location )
 }
 
 
-fost-install-loc .. : ../Boost//boost-python-dll ;
-
 alias fost
     :
         Cpp/fost-crypto-py
