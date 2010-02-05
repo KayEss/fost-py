@@ -4,23 +4,34 @@ fost-exe fpython
     :
         ../../../Boost//boost-python-dll
         /python//python
-        ../fost-python/
-        ../fost-pyhost/
+        ../fost-python
+        ../fost-pyhost
         fpython.cpp
     ;
 
 
 rule run-fpython-execute ( runrule : testname ) {
-    local testfile = $(testname) ".py" ;
-    local fullname = "fpython-run-" $(testname) ;
-    $(runrule) fpython
+    $(runrule) # We need to explicitly have all of this for Boost 1.41.0 on Windows
+            ../../../Boost//boost-date_time-dll
+            ../../../Boost//boost-filesystem-dll
+            ../../../Boost//boost-regex-dll
+            ../../../Boost//boost-system-dll
+            ../../../Boost//boost-thread-dll
+            ../../../fost-base/Cpp/fost-core/
+            ../../../fost-base/Cpp/fost-cli/
+            ../../../Boost//boost-python-dll
+            /python//python
+            ../fost-python
+            ../fost-pyhost
+            fpython.cpp
         :
         :
-            $(testfile:J)
+            $(testname).py
         :
+            <target-os>windows:<source>../../../fost-base/External//ole
         :
-            $(fullname:J)
-        ;
+            fpython-$(runrule)-$(testname)
+    ;
 }
 
 rule run-fpython-fail ( testname ) {
