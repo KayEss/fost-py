@@ -30,6 +30,8 @@ rule py-install ( pyd : location )
 }
 
 
+fost-install ../Boost//boost-python-dll ;
+
 alias fost
     :
         ../fost-base//fost
