@@ -1,5 +1,5 @@
 
-lib fost-python :
+fost-lib fost-python :
         ../../../Boost//boost-python-dll
         ../../../fost-base/Cpp/fost-core/
         pyjson.cpp
@@ -8,4 +8,3 @@ lib fost-python :
         <use>/python//python_for_extensions
     ;
 
-fost-install fost-python ;
