@@ -30,8 +30,20 @@ rule py-install ( pyd : location )
 }
 
 
-alias fost
-    :
+alias aws :
+        ../fost-internet//aws
+    ;
+explicit aws ;
+
+alias examples :
+        ../fost-base//examples
+        ../fost-internet//examples
+        ../fost-orm//examples
+        Examples/wsgi/
+    ;
+explicit examples ;
+
+alias fost :
         ../fost-base//fost
         ../fost-internet//fost
         ../fost-orm//fost
@@ -48,8 +60,7 @@ alias fost
         Python
     ;
 
-alias tests
-    :
+alias tests :
         ../fost-base//tests
         ../fost-internet//tests
         ../fost-orm//tests
@@ -59,16 +70,8 @@ alias tests
     ;
 explicit tests ;
 
-alias examples
-    :
-        ../fost-base//examples
-        ../fost-internet//examples
-        ../fost-orm//examples
-        Examples/wsgi/
-    ;
-explicit examples ;
-
 alias all :
+        aws
         fost
         tests
         examples
