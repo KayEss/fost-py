@@ -47,7 +47,7 @@ assert unicode(response.url) == "http://www.google.com/", unicode(response.url)
 assert response.method == "HEAD", response.method
 assert response.protocol.startswith("HTTP/"), response.protocol
 assert response.status == 302, response.status
-assert response.message == "Found", response.message
+assert response.message in ["Found", "Moved Temporarily"], response.message
 assert not len(response.body), response.body
 
 print "Testing user_agent and ua_response - GET"
