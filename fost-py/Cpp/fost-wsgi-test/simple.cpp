@@ -1,5 +1,5 @@
 /*
-    Copyright 2009, Felspar Co Ltd. http://fost.3.felspar.com/
+    Copyright 2009-2010, Felspar Co Ltd. http://fost.3.felspar.com/
     Distributed under the Boost Software License, Version 1.0.
     See accompanying file LICENSE_1_0.txt or copy at
         http://www.boost.org/LICENSE_1_0.txt
@@ -24,7 +24,10 @@ namespace {
 
             python::wsgi::application app(appname);
 
-            http::server::request req("GET", url::filepath_string("/"), std::auto_ptr< mime >( new empty_mime ));
+            http::server::request req(
+                "GET", url::filepath_string("/"),
+                std::auto_ptr< binary_body >( new binary_body )
+            );
             std::auto_ptr< mime > response = app(req);
             FSL_CHECK_EQ(response->headers()["Content-Type"].value(), L"text/plain");
             FSL_CHECK(response->headers()["Content-Type"].subvalue(L"charset").isnull());
