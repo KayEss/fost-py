@@ -54,8 +54,8 @@ void ua_fost_authenticate(
 
 std::string ua_response_body(http::user_agent::response &response) {
     std::string ret;
-    const binary_body &body = response.body();
-    for ( mime::const_iterator part( body.begin() ); part != body.end(); ++part )
+    boost::shared_ptr< const binary_body > body = response.body();
+    for ( mime::const_iterator part( body->begin() ); part != body->end(); ++part )
         ret += std::string(
             reinterpret_cast< nliteral >((*part).first),
             reinterpret_cast< nliteral >((*part).second)
