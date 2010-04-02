@@ -6,5 +6,5 @@ fost-smoke-test fost-wsgi-test-smoke
         ../fost-pyhost/
         ../fost-wsgi/
     :
-        simple.cpp
+        #simple.cpp
     ;
