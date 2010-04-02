@@ -146,8 +146,13 @@ std::auto_ptr< mime > fostlib::python::wsgi::application::operator () (http::ser
     environ["SERVER_NAME"] = boost::python::str("localhost");
     environ["SERVER_PORT"] = boost::python::str(coerce< string >( 8001 ));
 
-    for ( mime::mime_headers::const_iterator header( req.data().headers().begin() ); header != req.data().headers().end(); ++header ) {
-        boost::python::str name = boost::python::str(header->first).replace("-", "_").upper();
+    for (
+        mime::mime_headers::const_iterator header( req.data()->headers().begin() );
+        header != req.data()->headers().end();
+        ++header
+    ) {
+        boost::python::str name =
+            boost::python::str(header->first).replace("-", "_").upper();
         environ["HTTP_" + name] = header->second.value();
     }
 
