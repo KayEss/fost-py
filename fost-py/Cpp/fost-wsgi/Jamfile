@@ -1,10 +1,11 @@
 
-fost-lib fost-wsgi
+fost-lib-autotest fost-wsgi
+    :
+        Cpp/fost-wsgi
     :
         /python//python
         ../../../Boost//boost-python-dll
-        ../../../fost-internet/Cpp/fost-inet/
-        ../fost-python/
-        ../fost-pyhost/
-        application.cpp
+        ../../../fost-internet/Cpp/fost-inet
+        ../fost-python
+        ../fost-pyhost
     ;
