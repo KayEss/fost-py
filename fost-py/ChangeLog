@@ -1,0 +1,12 @@
+2010-04-03  Kirit Saelensminde  <kirit@felspar.com>
+ Code layout
+ - Moved internal headers to a better location
+
+2010-03-29  Kirit Saelensminde  <kirit@felspar.com>
+ Internet bindings
+ - The user agent body is now returned as a Python string rather than as a
+   Unicode string. Interpretation of the data is now up to the Python code.
+
+2010-03-22  Kirit Saelensminde  <kirit@felspar.com>
+ ChangeLog
+ - Added ChangeLog

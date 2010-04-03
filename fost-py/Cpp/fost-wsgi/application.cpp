@@ -9,7 +9,7 @@
 #include "fost-wsgi.hpp"
 #include <fost/pyhost>
 #include <fost/threading>
-#include <fost/detail/wsgi.application.hpp>
+#include <fost/wsgi.application.hpp>
 
 #include <boost/python/stl_iterator.hpp>
 

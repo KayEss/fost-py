@@ -14,4 +14,4 @@
 
 
 #include <fost/python>
-#include <fost/detail/wsgi.application.hpp>
+#include <fost/wsgi.application.hpp>

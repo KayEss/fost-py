@@ -13,4 +13,4 @@
 #endif
 
 
-#include <fost/detail/inproc.hpp>
+#include <fost/inproc.hpp>
