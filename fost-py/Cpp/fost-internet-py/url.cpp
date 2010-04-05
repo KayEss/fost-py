@@ -37,7 +37,9 @@ url url_join(const url &u, const string &r) {
     std::pair< string, nullable< string > > parts = partition(r, "?");
     url ret(u, coerce< url::filepath_string >(parts.first));
     if ( !parts.second.isnull() )
-        ret.query() = url::query_string(parts.second.value());;
+        ret.query() = url::query_string(coerce<ascii_printable_string>(
+            parts.second.value()
+        ));
     return ret;
 }
 
@@ -48,7 +50,9 @@ void ua_fost_authenticate(
     ua.authentication(boost::function<
         void ( fostlib::http::user_agent::request& )
     >(boost::lambda::bind(
-        fostlib::http::fost_authentication, key, secret, std::set< fostlib::string >(), boost::lambda::_1
+        fostlib::http::fost_authentication,
+        key, secret,
+        std::set< fostlib::string >(), boost::lambda::_1
     )));
 }
 
