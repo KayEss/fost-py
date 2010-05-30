@@ -1,3 +1,7 @@
+2010-05-30  Kirit Saelensminde  <kirit@felspar.com>
+ Code layout
+ - Changed the layout of the internet Python code.
+
 2010-04-03  Kirit Saelensminde  <kirit@felspar.com>
  Code layout
  - Moved internal headers to a better location

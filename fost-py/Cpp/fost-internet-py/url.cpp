@@ -8,7 +8,6 @@
 
 #include "url.hpp"
 #include <fost/http>
-#include <boost/lambda/bind.hpp>
 
 
 using namespace fostlib;
@@ -43,26 +42,3 @@ url url_join(const url &u, const string &r) {
     return ret;
 }
 
-
-void ua_fost_authenticate(
-    http::user_agent &ua, const string &key, const string &secret
-) {
-    ua.authentication(boost::function<
-        void ( fostlib::http::user_agent::request& )
-    >(boost::lambda::bind(
-        fostlib::http::fost_authentication,
-        key, secret,
-        std::set< fostlib::string >(), boost::lambda::_1
-    )));
-}
-
-std::string ua_response_body(http::user_agent::response &response) {
-    std::string ret;
-    boost::shared_ptr< const binary_body > body = response.body();
-    for ( mime::const_iterator part( body->begin() ); part != body->end(); ++part )
-        ret += std::string(
-            reinterpret_cast< nliteral >((*part).first),
-            reinterpret_cast< nliteral >((*part).second)
-        );
-    return ret;
-}
