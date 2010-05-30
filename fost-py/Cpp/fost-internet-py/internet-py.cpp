@@ -7,9 +7,9 @@
 
 
 #include <fost/python>
-#include <fost/mailbox>
-#include "url.hpp"
 #include "agent.hpp"
+#include "mail.hpp"
+#include "url.hpp"
 
 
 using namespace fostlib;
@@ -66,19 +66,29 @@ BOOST_PYTHON_MODULE( _internet ) {
         "ua_response", no_init
     )
         .add_property("method",
-            accessors_getter< http::user_agent::response, const string, &http::user_agent::response::method >
+            accessors_getter<
+                http::user_agent::response, const string,
+                &http::user_agent::response::method >
         )
         .add_property("url",
-            accessors_getter< http::user_agent::response, const url, &http::user_agent::response::address >
+            accessors_getter<
+                http::user_agent::response, const url,
+                &http::user_agent::response::address >
         )
         .add_property("protocol",
-            accessors_getter< http::user_agent::response, const string, &http::user_agent::response::protocol >
+            accessors_getter<
+                http::user_agent::response, const string,
+                &http::user_agent::response::protocol >
         )
         .add_property("status",
-            accessors_getter< http::user_agent::response, const int, &http::user_agent::response::status >
+            accessors_getter<
+                http::user_agent::response, const int,
+                    &http::user_agent::response::status >
         )
         .add_property("message",
-            accessors_getter< http::user_agent::response, const string, &http::user_agent::response::message >
+            accessors_getter<
+                http::user_agent::response, const string,
+                &http::user_agent::response::message >
         )
         .add_property("body", ua_response_body)
     ;
@@ -95,4 +105,6 @@ BOOST_PYTHON_MODULE( _internet ) {
         .def("fost_authenticate", ua_fost_authenticate)
     ;
 
+    def("iterate_pop3_mailbox", iterate_pop3_mailbox_string_host);
+    def("iterate_pop3_mailbox", iterate_pop3_mailbox);
 }

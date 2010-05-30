@@ -11,6 +11,7 @@ python-extension _internet :
         ../fost-python/
         agent.cpp
         internet-py.cpp
+        mail.cpp
         url.cpp
     :
         <include>../include/

@@ -66,3 +66,10 @@ ua = _internet.user_agent(_internet.url("http://svn.felspar.com/"))
 response = ua(_internet.ua_request("GET", ua.base("/public/")))
 assert unicode(response.url) == "http://svn.felspar.com/public/", unicode(response.url)
 assert response.status == 200, response.status
+
+print "Testing pop3 mailbox iteration"
+check_throw(_internet.iterate_pop3_mailbox, 
+    _internet.host("localhost"),
+    lambda x: False,
+    "nouser", "password"
+)
