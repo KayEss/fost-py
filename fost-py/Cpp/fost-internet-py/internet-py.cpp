@@ -7,6 +7,7 @@
 
 
 #include <fost/python>
+#include <fost/mailbox>
 #include "url.hpp"
 #include "agent.hpp"
 
@@ -24,6 +25,13 @@ BOOST_PYTHON_MODULE( _internet ) {
 
     def( "x_www_form_urlencoded", x_www_form_urlencoded );
 
+    class_< host > (
+        "host", init< string, optional< int > >()
+    )
+        .add_property("name", &host::name)
+        .def("__unicode__", coerce< string, host >)
+    ;
+
     class_< url >(
         "url", init< optional< string > >()
     )
@@ -32,20 +40,28 @@ BOOST_PYTHON_MODULE( _internet ) {
     ;
 
     class_<
-        http::user_agent::request, std::auto_ptr< http::user_agent::request >, boost::noncopyable
+        http::user_agent::request,
+        std::auto_ptr< http::user_agent::request >,
+        boost::noncopyable
     >(
         "ua_request", init< string, url, optional< string > >()
     )
         .add_property("method",
-            accessors_getter< http::user_agent::request, string, &http::user_agent::request::method >
+            accessors_getter<
+                http::user_agent::request, string,
+                &http::user_agent::request::method >
         )
         .add_property("url",
-            accessors_getter< http::user_agent::request, url, &http::user_agent::request::address >
+            accessors_getter<
+                http::user_agent::request, url,
+                &http::user_agent::request::address >
         )
     ;
 
     class_<
-        http::user_agent::response, std::auto_ptr< http::user_agent::response >, boost::noncopyable
+        http::user_agent::response,
+        std::auto_ptr< http::user_agent::response >,
+        boost::noncopyable
     >(
         "ua_response", no_init
     )

@@ -1,4 +1,6 @@
 2010-05-30  Kirit Saelensminde  <kirit@felspar.com>
+ Python bindings
+ - Added binding for the host class.
  Code layout
  - Changed the layout of the internet Python code.
 
