@@ -17,13 +17,7 @@ using namespace fostlib;
 void ua_fost_authenticate(
     http::user_agent &ua, const string &key, const string &secret
 ) {
-    ua.authentication(boost::function<
-        void ( fostlib::http::user_agent::request& )
-    >(boost::lambda::bind(
-        fostlib::http::fost_authentication,
-        key, secret,
-        std::set< fostlib::string >(), boost::lambda::_1
-    )));
+    fostlib::http::fost_authentication(ua, key, secret);
 }
 
 std::string ua_response_body(http::user_agent::response &response) {
