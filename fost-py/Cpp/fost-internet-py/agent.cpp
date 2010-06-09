@@ -30,3 +30,10 @@ std::string ua_response_body(http::user_agent::response &response) {
         );
     return ret;
 }
+
+fostlib::string ua_request_data(http::user_agent::request &request) {
+    return fostlib::string(
+        reinterpret_cast<const char *>((*request.data().begin()).first),
+        reinterpret_cast<const char *>((*request.data().begin()).second)
+    );
+}

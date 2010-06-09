@@ -13,3 +13,5 @@ void ua_fost_authenticate(
     fostlib::http::user_agent &ua, const fostlib::string &key, const fostlib::string &secret
 );
 std::string ua_response_body(fostlib::http::user_agent::response &);
+
+fostlib::string ua_request_data(fostlib::http::user_agent::request &);

@@ -50,6 +50,9 @@ print "Testing ua_request"
 request = _internet.ua_request("PUT", _internet.url())
 assert request.method == "PUT", request.method
 assert unicode(request.url) == "http://localhost/", unicode(request.url)
+request = _internet.ua_request("PUT", _internet.url(), "some data")
+assert request.data == "some data", request.data
+assert request.data == "some data", request.data # Make sure data is not consumed by the first call
 
 print "Testing user_agent and ua_response - HEAD"
 ua = _internet.user_agent()

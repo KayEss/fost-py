@@ -56,6 +56,7 @@ BOOST_PYTHON_MODULE( _internet ) {
                 http::user_agent::request, url,
                 &http::user_agent::request::address >
         )
+        .add_property("data", ua_request_data)
     ;
 
     class_<
